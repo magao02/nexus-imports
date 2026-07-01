@@ -20,7 +20,7 @@ export function CompanySearch({ value, onChange }: CompanySearchProps) {
         onChange={(event) => onChange(event.target.value)}
         type="search"
         placeholder="Buscar empresa"
-        variant="bordered"
+        variant="secondary"
         className="pl-10"
       />
     </div>

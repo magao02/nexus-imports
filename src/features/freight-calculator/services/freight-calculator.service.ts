@@ -138,7 +138,11 @@ export async function calculateFreightSimulation(
   const invoiceValue = input.hasInvoice ? roundCurrencyValue(input.orderValue * INVOICE_RATE) : 0;
   const insuranceValue = input.hasInsurance ? roundCurrencyValue(input.orderValue * INSURANCE_RATE) : 0;
   const freightValue = await quoteFrenetFreight(input);
-  const totalCommissionValue = roundCurrencyValue(commissionValue + invoiceValue + insuranceValue + freightValue);
+  const freightDiscountValue = roundCurrencyValue(Math.min(input.orderValue * 0.05, 60));
+  const discountedFreightValue = roundCurrencyValue(Math.max(0, freightValue - freightDiscountValue));
+  const totalCommissionValue = roundCurrencyValue(
+    commissionValue + invoiceValue + insuranceValue + discountedFreightValue,
+  );
 
   return {
     orderValue: roundCurrencyValue(input.orderValue),
@@ -146,7 +150,7 @@ export async function calculateFreightSimulation(
     commissionValue,
     invoiceValue,
     insuranceValue,
-    freightValue,
+    freightValue: discountedFreightValue,
     totalCommissionValue,
     estimatedTotal: roundCurrencyValue(
       input.orderValue + totalCommissionValue,
